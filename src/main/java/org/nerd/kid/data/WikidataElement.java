@@ -1,5 +1,7 @@
 package org.nerd.kid.data;
 
+import com.google.common.collect.Lists;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,7 @@ public class WikidataElement {
 
     private Map<String, List<String>> properties = new HashMap<>();
 
-    private List<String> propertiesNoValue;
+    private List<String> propertiesNoValue = Lists.newArrayList();
 
     public List<String> getPropertiesNoValue() {
         return propertiesNoValue;

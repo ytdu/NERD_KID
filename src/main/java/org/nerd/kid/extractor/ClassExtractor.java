@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassExtractor {
-    public List<String> loadClasses() {
+    public static List<String> classMap = loadClasses();
+    public static List<String> loadClasses() {
         // get the classes from the list in the csv file
         String fileFeatureMapper = "/class_mapper.csv";
-        InputStream inputStream = this.getClass().getResourceAsStream(fileFeatureMapper);
+        InputStream inputStream = ClassExtractor.class.getResourceAsStream(fileFeatureMapper);
         try {
             List<String> classMap = new ArrayList<>();
             Reader classMapperIn = new InputStreamReader(inputStream);

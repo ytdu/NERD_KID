@@ -9,7 +9,6 @@ import org.nerd.kid.data.WikidataElement;
 import org.nerd.kid.data.WikidataElementInfos;
 import org.nerd.kid.extractor.ClassExtractor;
 import org.nerd.kid.extractor.FeatureDataExtractor;
-import org.nerd.kid.extractor.FeatureFileExtractor;
 import org.nerd.kid.extractor.wikidata.NerdKBFetcherWrapper;
 import org.nerd.kid.extractor.wikidata.WikidataFetcherWrapper;
 import org.nerd.kid.service.NerdKidPaths;
@@ -30,7 +29,8 @@ public class WikidataNERPredictor {
     private XStream streamer = new XStream();
     private RandomForest forest = null;
     private WikidataFetcherWrapper wrapper = null;
-    private FeatureDataExtractor featureDataExtractor = null;
+    // feature data extractor doesn't depend on any wrapper, accepting the wikidata element object
+    private FeatureDataExtractor featureDataExtractor = new FeatureDataExtractor();
     private ModelBuilder modelBuilder = new ModelBuilder();
 
     public void init() {
@@ -89,8 +89,6 @@ public class WikidataNERPredictor {
 
     /* Method for accepting Wikidata element (id, label, properties-values) to be predicted*/
     public WikidataElementInfos predict(WikidataElement wikidataElement) {
-        // feature data extractor doesn't depend on any wrapper, accepting the wikidata element object
-        featureDataExtractor = new FeatureDataExtractor();
 
         final WikidataElementInfos wikidataElementInfos = new WikidataElementInfos();
 
@@ -119,7 +117,7 @@ public class WikidataNERPredictor {
             // predict the instance's class based on the features collected
             int prediction = forest.predict(ArrayUtils.toPrimitive(combinedFeatureWikidata));
 
-            List<String> classMapper = new ClassExtractor().loadClasses();
+            List<String> classMapper = ClassExtractor.classMap;
             wikidataElementInfos.setPredictedClass(classMapper.get(prediction));
         } else {
             wikidataElementInfos.setPredictedClass("OTHER");
@@ -142,7 +140,7 @@ public class WikidataNERPredictor {
             // predict the instance's class based on the features collected
             int prediction = forest.predict(rawFeatures);
 
-            List<String> classMapper = new ClassExtractor().loadClasses();
+            List<String> classMapper = ClassExtractor.classMap;
             wikiInfos.setPredictedClass(classMapper.get(prediction));
         } else {
             wikiInfos.setPredictedClass("OTHER");
@@ -175,7 +173,7 @@ public class WikidataNERPredictor {
                     // predict the instance's class based on the features collected
                     int prediction = forest.predict(rawFeatures);
 
-                    List<String> classMapper = new ClassExtractor().loadClasses();
+                    List<String> classMapper = ClassExtractor.classMap;
                     // set the class with the prediction result
                     wikidataElementInfos.setPredictedClass(classMapper.get(prediction));
                 } else {
